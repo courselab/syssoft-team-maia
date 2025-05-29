@@ -30,6 +30,11 @@ end:
         mov %si, %ax
         ret
 
+        .global get_memsize
+get_memsize:
+        int $0x12
+        ret
+
 
 
 

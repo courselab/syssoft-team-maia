@@ -11,6 +11,7 @@
 #ifndef E8_H
 #define E8_H
 
-void __attribute__((fastcall, naked)) printf(const char *); 
+void __attribute__((fastcall, naked)) printf(const char *);
+unsigned short get_memsize(void);
 
-#endif	
+#endif

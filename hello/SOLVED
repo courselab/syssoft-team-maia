@@ -1,0 +1,4 @@
+- Implemented get_memsize() BIOS call (int 0x12) in libc.S.
+- Added prototype in `stdio.h`.
+- Added `u16_to_str` function in `main.c` to convert an unsigned short to a string.
+- Replace "Hello World!" with memory size output in `main.c`.
