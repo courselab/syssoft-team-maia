@@ -1,0 +1,43 @@
+### p1.c
+
+Toda vez que roda o programa, o endereço da função `main` muda. Isso acontece por causa do **ASLR** (Address Space Layout Randomization). Se desativar essa função, o endereço passa a ser sempre o mesmo.
+
+---
+
+### p2.c
+
+O programa lê a senha usando `scanf("%s")`, mas não limita quantos caracteres podem ser digitados. Se digitar algo muito longo, como `youshallnotpass`, isso acaba alterando partes da memória que não deveriam ser mexidas, permitindo o acesso mesmo com a senha errada. Esse problema é conhecido como **buffer overflow**.
+
+A versão corrigida (`p2fix.c`) usa `fgets`, que limita o tamanho do que é lido, e separa a verificação da senha em outra função. Isso evita esse tipo de erro mesmo sem proteção extra como o *stack protector*.
+
+---
+
+### p3.c
+
+Quando a função `foo` chama a função `bar`, o argumento é colocado na pilha (uma área de memória usada durante a execução). Depois da chamada, o resultado vem de volta num registrador chamado `eax`.
+
+As instruções no começo e no fim das funções (`push %ebp; mov %esp, %ebp` e `leave`) servem para montar e desmontar a pilha. Algumas instruções reservam espaço para variáveis locais, mas podem ser puladas se não forem necessárias.
+
+Se mudar o tipo de valor que `bar` devolve (por exemplo, de `int` para `char`), isso muda como `foo` trata esse valor. Por isso é importante declarar essas funções antes do `main`, assim o compilador já sabe como montar o código corretamente.
+
+---
+
+### p4
+
+- `p4-v1`: junta os arquivos diretamente;
+- `p4-v2`: usa uma biblioteca estática (`libp4.a`);
+- `p4-v3`: usa uma biblioteca compartilhada (`libp4.so`).
+
+Antes, `p4-v3` dava erro se fosse rodado de outro lugar porque não encontrava a biblioteca. Agora, o `Makefile` foi configurado com a opção `-Wl,-rpath,'$ORIGIN'`, que faz o programa procurar a biblioteca no mesmo local em que ele está. Assim, todas as versões funcionam da mesma forma, independentemente de onde forem executadas.
+
+A versão dinâmica ocupa menos espaço, mas depende da biblioteca externa para funcionar. Já as versões estáticas são maiores, mas não precisam de nada além do próprio executável.
+
+---
+
+### dyn
+
+Uma **biblioteca estática** é como se fosse anexada dentro de cada programa que usa ela. Isso aumenta o tamanho do programa, mas ele vira totalmente independente.
+
+Já uma **biblioteca dinâmica** é carregada separadamente quando o programa é executado. Se ela for feita com **código independente de posição** (*position independent*), ela pode ser carregada em qualquer lugar da memória. Isso permite que vários programas compartilhem a mesma biblioteca e economiza memória, além de evitar perda de desempenho com realocações.
+
+O link estático facilita distribuir um único binário. O link dinâmico economiza recursos e permite atualizar a biblioteca sem precisar recompilar os programas.
